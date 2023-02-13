@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/style.css">
+    <title>Python Sandbox</title>
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            {% for line in question_txt %}
+            <p>{{ line|e }}</p>
+            {% endfor %}
+        </div>
+        <div id="editor" class="editor"></div>
+        <button id="btn">実行</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.15.0/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.2/axios.min.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        // aceエディタを作成
+        let editor = ace.edit("editor");
+        // 言語モードをpythonに設定
+        editor.session.setMode("ace/mode/python")
+
+        const btn = document.getElementById("btn");
+        btn.addEventListener("click", () => {
+            submit()
+        })
+
+        const submit = () => {
+            let form = new FormData();
+            form.append("text", editor.getValue());
+            // postして正解不正解の表示を行う
+            axios.post("/exec", form).then((res) => {
+                if (res.data.result == true) {
+                    alert("正解です！")
+                } else {
+                    alert("不正解です！")
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>
